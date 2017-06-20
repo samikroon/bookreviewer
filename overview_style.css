@@ -1,5 +1,10 @@
 .book-column {
-	border: 5px solid black;
+	border: 5px;
 	text-align: center;
-	height: 40px;
+	height: 40%;
+}
+
+.book-image {
+	max-width:100%;
+	max-height:100%;
 }

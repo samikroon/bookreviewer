@@ -23,7 +23,7 @@
 
 			<nav>
 				<ul>
-					<li><a class="navA" href="">Home</a></li>
+					<li><a class="navA" href="index.php">Home</a></li>
 					<li><a class="navA" href="books.php">Books</a></li>
 					
 					<li id="logoutListing" style="float:right">
