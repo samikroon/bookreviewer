@@ -177,8 +177,6 @@ $("#addReview").click(function(){
 	var form = $('#submitNewReview')[0];
 	var data = new FormData(form);
 	
-	console.log($.cookie('unBookreviewer'));
-	
 	for (var value of data.values()) {
 		console.log(value);
 	}

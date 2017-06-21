@@ -61,7 +61,7 @@
 				</tr>
 				<tr>
 					<td>Rating</td>
-					<td id="rateCount"></td>
+					<td id="rating"></td>
 				</tr>
 				<tr>
 					<td>Description</td>
