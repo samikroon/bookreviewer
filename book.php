@@ -92,7 +92,7 @@
 			</thead>
 			
 			<tbody id="reviewTableBody">
-				
+
 			</tbody>
 			
 		</table>
@@ -117,14 +117,11 @@ $.get( "http://37.97.227.173:5000/books/isbn/<?php print($_GET["isbn"]) ?>", fun
 			$("#myTable #description").append(book.description);
 		});
 		
-$.get("http://37.97.227.173:5000/review/by_user/samikroon", function( data ){
-	console.log(data);
-})
 		
 $.get( "http://37.97.227.173:5000/review/by_isbn/<?php print($_GET["isbn"]) ?>", function( data ) {
-						
-			for (var x in data)
-				console.log(x)
+			
+			for (var x in data.results)
+				$( "#reviewTable #reviewTableBody" ).append("<tr><td><a href=\"review.php?reviewid="+data.results[x]._id+"&isbn="+<?php print($_GET["isbn"]) ?>+"\">"+data.results[x].reviewTitle+"</a></td><td>"+data.results[x].reviewBy+"</td></tr>")
 		});
 </script>
 
