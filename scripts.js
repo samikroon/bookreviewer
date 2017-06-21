@@ -126,9 +126,8 @@ function navLoggedInRegular() {
 
 function navLoggedInAdmin() {
 	$("#logoutListing").append("<a class=\"navA\" href=\"#\" onClick=\"logout();\">Logout</a>");
-	$("#adminListing").append("<a class=\"navA\" href=\"\">Admin panel</a>");
+	$("#adminListing").append("<a class=\"navA\" href=\"admin_panel.php\">Admin panel</a>");
 	$("#profileListing").append("<a class=\"navA\" href=\"\">"+$.cookie('unBookreviewer')+"</a>");
-	$("#addBookListing").append("<a class=\"navA\" href=\"#\" data-toggle=\"modal\" data-target=\"#addBookModal\">Add Book</a>");
 }
 
 function navNotLoggedIn() {
