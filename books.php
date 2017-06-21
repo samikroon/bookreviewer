@@ -10,18 +10,13 @@ color:#00FF00;>
 		
 	</div>
 	<div class="row">
-		<div class="book-column col-md-4" id="foto">
-			<img src="images/hermanKoch.jpg" class="book-image">
-		</div>
-		
-		<div class="book-column col-md-4" id="foto">
-			<img src="images/deavonden_gerardreve.jpg" class="book-image">
-		</div>
+
 
 	</div>
 
 	
 </div>
+
 <script>
 	$(window).on('load', function loadFoto() {
 		$.get( "http://37.97.227.173:5000/books", function( data ) {
@@ -31,12 +26,15 @@ color:#00FF00;>
 			$( ".row" ).append("<div class=\"book-column col-md-4\" id =\"foto\"><a href=\"book.php?isbn="+data.results[x].isbn+"\"><img src=\""+data.results[x].photoPath+"\" class=\"book-image\"></div>")
 			
 			
+			
 			console.log(data.results[x]);
 		}
 
 		});
 	});
 </script>
+
+
 
 </body>
 </html>

@@ -17,6 +17,7 @@
 	</head>
 		<body>
 			<header>
+					<a href="index.php" style="height:100%;width:100%"><div style="height:100%;width:100%"></div></a>
 			</header>
 			<?php include("modals.php"); ?>
 			

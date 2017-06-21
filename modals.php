@@ -87,7 +87,7 @@
 
 
 
-<!-- Register MODAL -->
+<!-- addBookModal MODAL -->
 <div id="addBookModal" class="modal fade" role="dialog">
   <div class="modal-dialog">
 
@@ -143,6 +143,41 @@
     <div class="modal-footer">
       <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       <button type="submit" class="btn btn-default" id="addBook"> Add book</button>
+    </div>
+  </div>
+
+  </div>
+</div>
+
+<!-- addReviewModal MODAL -->
+<div id="addReviewModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+  <!-- Modal content-->
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal">&times;</button>
+      <h4 class="modal-title">Write Review</h4>
+    </div>
+    <div class="modal-body">
+      <form enctype="multipart/form-data", id="submitNewReview">
+        <p>Please fill in the following fields</p>
+        <table>
+			<tr>
+				<td><p>Title:</p></td>
+				<td><p><input type="text" id="reviewTitle" name="reviewTitle"></p></td>
+			</tr>
+			<tr>
+				<td><p>Review:</p></td>
+				<td><p><textarea id="reviewContent" name="reviewContent" rows="8" cols="50"></textarea></p></td>
+			</tr>
+
+        </table>
+    </form>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      <button type="submit" class="btn btn-default" id="addReview">Submit Review</button>
     </div>
   </div>
 

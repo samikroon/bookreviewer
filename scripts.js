@@ -145,6 +145,7 @@ $("#addBook").click(function(){
 		console.log(value);
 	}
 	un = $.cookie('unBookreviewer');
+	console.log(un);
 	token = $.cookie('tokenBookreviewer');
 	$.ajax({
 		type: "post",
@@ -169,7 +170,45 @@ $("#addBook").click(function(){
 			alert("Adding book failed, try again");
 		}
 	});
-				
+
+});
+
+$("#addReview").click(function(){
+	var form = $('#submitNewReview')[0];
+	var data = new FormData(form);
+	
+	console.log($.cookie('unBookreviewer'));
+	
+	for (var value of data.values()) {
+		console.log(value);
+	}
+	
+	un = $.cookie('unBookreviewer');
+	token = $.cookie('tokenBookreviewer');
+	
+		$.ajax({
+		type: "post",
+		url: "http://37.97.227.173:5000/reviews",
+		headers: {
+			'username' : un,
+			'token' : token
+		},
+		data: data,
+		enctype: 'multipart/form-data',
+		contentType: false,
+		processData: false,
+		cache: false,
+		dataType: 'json',
+		success: function(data2) {
+			alert(JSON.stringify(data2));
+			
+			$('#addReviewModal').modal('hide');
+			
+		},
+		failure: function() {
+			alert("Adding review failed, try again");
+		}
+	});
 });
 
 
