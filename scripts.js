@@ -230,6 +230,7 @@ function sendRating(){
 
 }
 
+
 function addComment(){
 	alert("test")
 	var form = $('#submitNewComment')[0];
@@ -267,3 +268,103 @@ function addComment(){
 		}
 	});
 }
+
+function fillUserModal(){
+	if (!!$.cookie('unBookreviewer') && !!$.cookie('tokenBookreviewer')) {
+		un = $.cookie('unBookreviewer');
+		token = $.cookie('tokenBookreviewer');
+		$.ajax({
+			type: "get",
+			url: "http://37.97.227.173:5000/users",
+			headers: {
+				'username' : un,
+				'token' : token
+			},
+			success: function(data) {
+			$("#userTable").append("<tr><th>Username</th><th>User Type</th><th>Delete</th><th>Make Admin</th></tr>");
+				for (var x in data.results){
+					if (data.results[x].admin) {
+						admin = "Administrator";
+					} else {
+						admin = "Regular user";
+					}
+					$( "#userTable" ).append("<tr><td>"+data.results[x].username+"</td><td>"+admin+"</td><td><button type=\"submit\" class=\"btn btn-primary btn-sm\" onclick=\"removeUser(\'"+(data.results[x].username)+"\')\">delete user</button></td><td><button type=\"submit\" class=\"btn btn-primary btn-sm\" onclick=\"makeAdmin(\'"+(data.results[x].username)+"\')\">make admin</button></td></tr>");
+				}
+			}
+		});
+	}
+
+};
+
+
+$("#searchUserButton").click(function() {
+	if (!!$.cookie('unBookreviewer') && !!$.cookie('tokenBookreviewer')) {
+		un = $.cookie('unBookreviewer');
+		token = $.cookie('tokenBookreviewer');
+		username = $("#searchUser").val();
+		$.ajax({
+			type: "get",
+			url: "http://37.97.227.173:5000/users/username/"+username,
+			headers: {
+				'username' : un,
+				'token' : token
+			},
+			success: function(data) {
+				$('#userTable').empty();
+				$("#userTable").append("<tr><th>Username</th><th>User Type</th><th>Delete</th><th>Make Admin</th></tr>");
+				if (data.results[0].admin) {
+						admin = "Administrator";
+					} else {
+						admin = "Regular user";
+					}
+				$( "#userTable" ).append("<tr><td>"+data.results[0].username+"</td><td>"+admin+"</td><td><button type=\"submit\" class=\"btn btn-primary btn-sm\" onclick=\"removeUser(\'"+(data.results[0].username)+"\')\">delete user</button></td><td><button type=\"submit\" class=\"btn btn-primary btn-sm\" onclick=\"makeAdmin(\'"+(data.results[0].username)+"\')\">make admin</button></td></tr>");
+				
+			}
+		});
+	}
+})
+
+
+function removeUser(username){
+	if (!!$.cookie('unBookreviewer') && !!$.cookie('tokenBookreviewer')) {
+		un = $.cookie('unBookreviewer');
+		token = $.cookie('tokenBookreviewer');
+		$.ajax({
+			type: "delete",
+			url: "http://37.97.227.173:5000/users/delete/"+username,
+			headers: {
+				'username' : un,
+				'token' : token
+			},
+			success: function(data) {
+				$('#userTable').empty();
+				fillUserModal();
+				
+			}
+		});
+	}
+}
+
+
+function makeAdmin(username){
+	if (!!$.cookie('unBookreviewer') && !!$.cookie('tokenBookreviewer')) {
+		un = $.cookie('unBookreviewer');
+		token = $.cookie('tokenBookreviewer');
+		$.ajax({
+			type: "put",
+			url: "http://37.97.227.173:5000/users/makeadmin/"+username,
+			headers: {
+				'username' : un,
+				'token' : token
+			},
+			success: function(data) {
+				$('#userTable').empty();
+				fillUserModal();
+				
+			}
+		});
+	}
+}
+
+
+

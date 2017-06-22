@@ -7,3 +7,8 @@ table.admin_panel{
 .admin_p_td {
 	padding: 20px;
 }
+
+.view-user-body {
+	height: 50%;
+	overflow-y: auto;
+}
