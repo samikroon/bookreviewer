@@ -171,8 +171,9 @@
 				<td><p>Review:</p></td>
 				<td><p><textarea id="reviewContent" name="reviewContent" rows="8" cols="50"></textarea></p></td>
 			</tr>
-
         </table>
+		
+	<input type='hidden' name='reviewOnBook' value=<?php print($_GET["isbn"]) ?>>
     </form>
     </div>
     <div class="modal-footer">
