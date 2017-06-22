@@ -198,7 +198,7 @@ $("#addReview").click(function(){
 		dataType: 'json',
 		success: function(data2) {
 			alert(JSON.stringify(data2));
-			
+			location.reload(true);
 			$('#addReviewModal').modal('hide');
 			
 		},
@@ -208,5 +208,62 @@ $("#addReview").click(function(){
 	});
 });
 
+function sendRating(){
+	var rating = ($('#sel1').val());
+	var isbn = ($('#name1').attr("value"));
+	var url = "http://37.97.227.173:5000/books/update_rating_by_isbn/"+isbn+"/"+rating
+	
+	un = $.cookie('unBookreviewer');
+	token = $.cookie('tokenBookreviewer');
+	
+	$.ajax({
+		type: "PUT",
+		url: url,
+		dataType: 'text',
+		headers: {
+			'username' : un,
+			'token' : token
+		},
+		success: function(data){
+			location.reload(true)}
+});
 
+}
 
+function addComment(){
+	alert("test")
+	var form = $('#submitNewComment')[0];
+	var data = new FormData(form);
+	var reviewID = ($('#commentAdder').attr("value"));;
+	
+	console.log(reviewID)
+	
+	for (var value of data.values()) {
+		console.log(value);
+	}
+	
+	un = $.cookie('unBookreviewer');
+	token = $.cookie('tokenBookreviewer');
+	
+		$.ajax({
+		type: "POST",
+		url: "http://37.97.227.173:5000/reviews/updatecomments/"+reviewID,
+		headers: {
+			'username' : un,
+			'token' : token
+		},
+		data: data,
+		enctype: 'multipart/form-data',
+		contentType: false,
+		processData: false,
+		cache: false,
+		dataType: 'json',
+		success: function(data2) {
+			alert(JSON.stringify(data2));
+			
+		},
+		failure: function() {
+			alert("Adding review failed, try again");
+		}
+	});
+}
