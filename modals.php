@@ -62,7 +62,7 @@
       			<td><p>gender:</p></td>
       			<td>
       				<input type="radio" id = "genderReg" value="male"> Male
-  					<input type="radio" id = "genderReg" value="male"> Female
+  					  <input type="radio" id = "genderReg" value="female"> Female
       			</td>
       		</tr>
       		<tr>
@@ -98,7 +98,7 @@
       <h4 class="modal-title">ADD BOOK</h4>
     </div>
     <div class="modal-body">
-      <form enctype="multipart/form-data", id="addBookForm">
+      <form enctype="multipart/form-data" id="addBookForm">
         <p>Please fill in the following fields</p>
         <table>
           <tr>

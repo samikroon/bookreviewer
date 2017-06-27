@@ -1,3 +1,15 @@
+$(window).on('load', function(){
+	alert("jemom");
+	loggedIn();
+	if (window.location.pathname=='/profile_page.php') {
+		alert('correct');
+		profileDetails();
+	}
+});
+
+
+
+
 $("#login").click(function(){
 	username = $("#username").val();
 	password = $("#password").val();
@@ -89,7 +101,7 @@ function logout(){
 	location.reload();
 };
 
-$(window).on('load', function loggedIn() {
+function loggedIn() {
 	if (!!$.cookie('unBookreviewer') && !!$.cookie('tokenBookreviewer')) {
 		un = $.cookie('unBookreviewer');
 		token = $.cookie('tokenBookreviewer');
@@ -115,24 +127,64 @@ $(window).on('load', function loggedIn() {
 		navNotLoggedIn();
 	}
 	//alert(window.location.pathname);
-});
+}
 
 
 
 function navLoggedInRegular() {
 	$("#logoutListing").append("<a class=\"navA\" href=\"#\" onClick=\"logout();\">Logout</a>");
-	$("#profileListing").append("<a class=\"navA\" href=\"\">"+$.cookie('unBookreviewer')+"</a>");
+	$("#profileListing").append("<a class=\"navA\" href=\"profile_page.php\">"+$.cookie('unBookreviewer')+"</a>");
 }
 
 function navLoggedInAdmin() {
 	$("#logoutListing").append("<a class=\"navA\" href=\"#\" onClick=\"logout();\">Logout</a>");
 	$("#adminListing").append("<a class=\"navA\" href=\"admin_panel.php\">Admin panel</a>");
-	$("#profileListing").append("<a class=\"navA\" href=\"\">"+$.cookie('unBookreviewer')+"</a>");
+	$("#profileListing").append("<a class=\"navA\" href=\"profile_page.php\">"+$.cookie('unBookreviewer')+"</a>");
 }
 
 function navNotLoggedIn() {
 	$("#loginListing").append("<a class=\"navA\" href=\"#\" data-toggle=\"modal\" data-target=\"#loginModal\">Login</a>");
 	$("#registerListing").append("<a class=\"navA\" href=\"#\" data-toggle=\"modal\" data-target=\"#registerModal\">Register</a>");
+}
+
+
+function profileDetails() {
+	alert("ik kom hier uiteraard");
+	if (!!$.cookie('unBookreviewer') && !!$.cookie('tokenBookreviewer')) {
+		un = $.cookie('unBookreviewer');
+		token = $.cookie('tokenBookreviewer');
+		$.ajax({
+			type: "get",
+			url: "http://37.97.227.173:5000/check/login",
+			headers: {
+				'username' : un,
+				'token' : token
+			},
+			dataType: "text",
+			success: function(data) {
+				if (String(data) === "is_admin" || String(data) === "is_regular" ) {
+					$.getJSON("http://37.97.227.173:5000/users/username/"+un, function(data2){
+						$('#usernamepf').attr('value', data2.results[0].username);
+						$('#emailpf').attr('value', data2.results[0].email);
+						$('#fnamepf').attr('value', data2.results[0].fname);
+						$('#lnamepf').attr('value', data2.results[0].lname);
+						$('#agepf').attr('value', data2.results[0].age);
+						if (data2.results[0].gender == 'male') {
+							$("input[name='gender'][value='male']").prop('checked', true);
+						} else {
+							$("input[name='gender'][value='female']").prop('checked', true);
+						}
+						
+					});
+				} else {
+					navNotLoggedIn();
+				}
+			}
+		});
+	} else {
+		navNotLoggedIn();
+	}
+		//alert(window.location.pathname);
 }
 
 
@@ -364,6 +416,42 @@ function makeAdmin(username){
 			}
 		});
 	}
+}
+
+function submitChanges(){
+	var form = $('#profileForm')[0];
+	var data = new FormData(form);
+	alert("onclicking");
+	for (var value of data.values()) {
+		console.log(value);
+	}
+	un = $.cookie('unBookreviewer');
+	console.log(un);
+	token = $.cookie('tokenBookreviewer');
+	$.ajax({
+		type: "put",
+		url: "http://37.97.227.173:5000/users/update_user",
+		headers: {
+			'username' : un,
+			'token' : token
+		},
+		data: data,
+		enctype: 'multipart/form-data',
+		contentType: false,
+		processData: false,
+		cache: false,
+		dataType: 'json',
+		success: function(data2) {
+			alert(JSON.stringify(data2));
+			
+			location.reload();
+			
+		},
+		failure: function() {
+			alert("Changing profile failed, try again");
+		}
+	});
+
 }
 
 

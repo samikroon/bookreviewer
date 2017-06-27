@@ -63,10 +63,9 @@
 						
 					</tr>
 				</table>
-
-			<button type="button" class="btn btn-default" onclick="addComment()">Submit Comment</button>
-		<input id ="commentAdder" type='hidden' name='commentOnReview' value='<?php print($_GET["reviewid"]) ?>'>
-		</form>
+				<input id ="commentAdder" type='hidden' name='commentOnReview' value='<?php print($_GET["reviewid"]) ?>'>
+				<button type="button" class="btn btn-default" onclick='addComment();'>Submit Comment</button>
+			</form>
 		</div>
 	</div>
 
