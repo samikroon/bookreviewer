@@ -149,7 +149,6 @@ function navNotLoggedIn() {
 
 
 function profileDetails() {
-	alert("ik kom hier uiteraard");
 	if (!!$.cookie('unBookreviewer') && !!$.cookie('tokenBookreviewer')) {
 		un = $.cookie('unBookreviewer');
 		token = $.cookie('tokenBookreviewer');
@@ -184,6 +183,13 @@ function profileDetails() {
 	} else {
 		navNotLoggedIn();
 	}
+	$.getJSON("http://37.97.227.173:5000/users/username/"+un, function(data3){
+		if ("profilePicture" in data3.results[0]) {
+			$('#profilePicture').attr('src', data3.results[0].profilePicture);
+		} else {
+			$('#profilePicture').attr('src', '/profile-pictures/empty-profile-picture.gif');
+		}
+	});
 		//alert(window.location.pathname);
 }
 
@@ -223,6 +229,8 @@ $("#addBook").click(function(){
 	});
 
 });
+
+
 
 $("#addReview").click(function(){
 	var form = $('#submitNewReview')[0];
@@ -453,6 +461,41 @@ function submitChanges(){
 	});
 
 }
+
+
+$("#changePPButton").click(function(){
+	alert("kom in change functie");
+	var form = $('#submitNewPP')[0];
+	var data = new FormData(form);
+	
+	un = $.cookie('unBookreviewer');
+	console.log(un);
+	token = $.cookie('tokenBookreviewer');
+	$.ajax({
+		type: "post",
+		url: "http://37.97.227.173:5000/users/profile_picture",
+		headers: {
+			'username' : un,
+			'token' : token
+		},
+		data: data,
+		enctype: 'multipart/form-data',
+		contentType: false,
+		processData: false,
+		cache: false,
+		dataType: 'json',
+		success: function(data2) {
+			alert(data2);
+			
+			$('#uploadpp').modal('hide');
+			
+		},
+		failure: function() {
+			alert("Adding profile picture failed, try again");
+		}
+	});
+
+});
 
 
 

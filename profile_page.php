@@ -53,13 +53,15 @@ color:#00FF00;>
 		<div class="form-group">
 			<label class="control-label col-sm-2" for="submitChanges"></label>
 			<div class="col-sm-5">
-				<a href="#" class="btn btn-default" id="submitThings" onclick="submitChanges();"> Submit changes </a>
+				<a href="#" class="btn btn-default" id="submitThings" onclick="submitChanges();" for="changePF"> Submit changes </a>
+				<a href="#" class="btn btn-default" id="changePF" data-toggle="modal" data-target="#uploadpp"> Change profile picture </a>
+				<a href="#" class="btn btn-default" id="changePswd" onclick="changePassword();"> Change password </a>
 			</div>
 		</div>
 	</form>
 </div>
 <div class="col-md-4">
-	<canvas id="profilePicure" width="200" height="300"></canvas>
+	<img id="profilePicture" height="300" width="200">
 </div>
 
 <script>
