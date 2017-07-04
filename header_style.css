@@ -30,6 +30,10 @@ li {
     text-decoration: none;
 }
 
+.search {
+    padding: 14px 16px;
+}
+
 /* Change the link color to #111 (black) on hover */
 .navA:hover {
     background-color: #111;

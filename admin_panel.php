@@ -16,20 +16,6 @@ color:#00FF00;>
 			</a>
 		</td>
 		<td class="admin_p_td">
-			<a href="#" class="btn btn-sq-lg btn-primary">
-				<i class="fa fa-user fa-5x"></i><br/>
-				User Management
-			</a>
-		</td>
-	</tr>
-	<tr>
-		<td class="admin_p_td">
-			<a href="#" class="btn btn-sq-lg btn-primary">
-				<i class="fa fa-user fa-5x"></i><br/>
-				User Management
-			</a>
-		</td>
-		<td class="admin_p_td">
 			<a href="#" class="btn btn-sq-lg btn-primary" data-toggle="modal" data-target="#addBookModal">
 				<i class="fa fa-book fa-5x"></i><br/>
 				Add Book

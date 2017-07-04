@@ -1,11 +1,45 @@
+var cookieExpireDate = new Date();
+var minutes = 180;
+cookieExpireDate.setTime(cookieExpireDate.getTime()+(minutes*60*1000));
+
+
+
 $(window).on('load', function(){
-	alert("jemom");
+	console.log("check login");
 	loggedIn();
 	if (window.location.pathname=='/profile_page.php') {
-		alert('correct');
 		profileDetails();
+		profileReviews();
 	}
+	if (window.location.pathname=='/public_profile.php') {
+		publicDetails();
+		publicReviews();
+	}
+	if (window.location.pathname.indexOf('/review.php') !== -1) {
+		reviewPage();
+	}
+	if (window.location.pathname.indexOf('/book.php') !== -1) {
+		bookPage();
+	}
+	if (window.location.pathname.indexOf('/books.php') !== -1) {
+		bookCollection();
+	}
+	if (window.location.pathname.indexOf('/book_search.php') !== -1) {
+		bookSearch();
+	}
+
 });
+
+
+
+$("#searchButton").click(function() {
+	query = $("#query").val();
+	if (query.length == 0) {
+		alert("You did not write a search query.");
+	} else {
+		window.location.href = "book_search.php?search="+query;
+	}
+})
 
 
 
@@ -28,8 +62,8 @@ $("#login").click(function(){
 			contentType: "application/json; charset=utf-8",
 			dataType: "text",
 			success: function(data) {
-				$.cookie("unBookreviewer", username, {expires : 1});
-				$.cookie("tokenBookreviewer", data, {expires: 1});
+				$.cookie("unBookreviewer", username, {expires : cookieExpireDate});
+				$.cookie("tokenBookreviewer", data, {expires: cookieExpireDate});
 				$('#loginModal').modal('hide');
 				location.reload();
 			},
@@ -105,6 +139,7 @@ function loggedIn() {
 	if (!!$.cookie('unBookreviewer') && !!$.cookie('tokenBookreviewer')) {
 		un = $.cookie('unBookreviewer');
 		token = $.cookie('tokenBookreviewer');
+		console.log(un + " = un token = " + token);
 		$.ajax({
 			type: "get",
 			url: "http://37.97.227.173:5000/check/login",
@@ -115,6 +150,7 @@ function loggedIn() {
 			dataType: "text",
 			success: function(data) {
 				if (String(data) === "is_admin") {
+					$.cookie("adminBookreviewer", 1, {expires : cookieExpireDate});
 					navLoggedInAdmin();
 				} else if (String(data) === "is_regular") {
 					navLoggedInRegular();
@@ -124,6 +160,7 @@ function loggedIn() {
 			}
 		});
 	} else {
+		console.log("cookies are f***ed");
 		navNotLoggedIn();
 	}
 	//alert(window.location.pathname);
@@ -176,12 +213,12 @@ function profileDetails() {
 						
 					});
 				} else {
-					navNotLoggedIn();
+					location.href='http://37.97.227.173/';
 				}
 			}
 		});
 	} else {
-		navNotLoggedIn();
+		location.href='http://37.97.227.173/';
 	}
 	$.getJSON("http://37.97.227.173:5000/users/username/"+un, function(data3){
 		if ("profilePicture" in data3.results[0]) {
@@ -193,6 +230,27 @@ function profileDetails() {
 		//alert(window.location.pathname);
 }
 
+function profileReviews() {
+	if (!!$.cookie('unBookreviewer') && !!$.cookie('tokenBookreviewer')) {
+		un = $.cookie('unBookreviewer');
+		token = $.cookie('tokenBookreviewer');
+		$.ajax({
+			type: "get",
+			url: "http://37.97.227.173:5000/review/by_user/" + un,
+			dataType: "json",
+			success: function(data) {
+				for (var x in data.results){
+					console.log(data.results[x].reviewTitle);
+					$( "#profileReviews" ).append("<tr onclick=\"window.location.href = 'review.php?reviewid="+data.results[x]._id+"&isbn="+ data.results[x].reviewOnBook +"';\"><td>"+data.results[x].reviewTitle+"</td><td>"+data.results[x].bookTitle+"</td><td>"+data.results[x].reviewOnBook+"</td></tr>");
+				}
+			}
+		});
+	} else {
+		location.href='http://37.97.227.173/';
+	}
+}
+
+
 
 $("#addBook").click(function(){
 	var form = $('#addBookForm')[0];
@@ -201,32 +259,35 @@ $("#addBook").click(function(){
 	for (var value of data.values()) {
 		console.log(value);
 	}
-	un = $.cookie('unBookreviewer');
-	console.log(un);
-	token = $.cookie('tokenBookreviewer');
-	$.ajax({
-		type: "post",
-		url: "http://37.97.227.173:5000/books",
-		headers: {
-			'username' : un,
-			'token' : token
-		},
-		data: data,
-		enctype: 'multipart/form-data',
-		contentType: false,
-		processData: false,
-		cache: false,
-		dataType: 'json',
-		success: function(data2) {
-			alert(JSON.stringify(data2));
-			
-			$('#addBookModal').modal('hide');
-			
-		},
-		failure: function() {
-			alert("Adding book failed, try again");
-		}
-	});
+	if ($.isNumeric($(".addBookISBN").val())) {
+		un = $.cookie('unBookreviewer');
+		console.log(un);
+		token = $.cookie('tokenBookreviewer');
+		$.ajax({
+			type: "post",
+			url: "http://37.97.227.173:5000/books",
+			headers: {
+				'username' : un,
+				'token' : token
+			},
+			data: data,
+			enctype: 'multipart/form-data',
+			contentType: false,
+			processData: false,
+			cache: false,
+			dataType: 'json',
+			success: function(data2) {
+				alert(JSON.stringify(data2));
+				
+				$('#addBookModal').modal('hide');
+				
+			},
+			failure: function() {
+				alert("Adding book failed, try again");
+			}
+		});
+	}
+	
 
 });
 
@@ -292,16 +353,10 @@ function sendRating(){
 
 
 function addComment(){
-	alert("test")
 	var form = $('#submitNewComment')[0];
 	var data = new FormData(form);
 	var reviewID = ($('#commentAdder').attr("value"));;
 	
-	console.log(reviewID)
-	
-	for (var value of data.values()) {
-		console.log(value);
-	}
 	
 	un = $.cookie('unBookreviewer');
 	token = $.cookie('tokenBookreviewer');
@@ -318,10 +373,9 @@ function addComment(){
 		contentType: false,
 		processData: false,
 		cache: false,
-		dataType: 'json',
+		dataType: 'text',
 		success: function(data2) {
-			alert(JSON.stringify(data2));
-			
+			location.reload(true);			
 		},
 		failure: function() {
 			alert("Adding review failed, try again");
@@ -452,7 +506,7 @@ function submitChanges(){
 		success: function(data2) {
 			alert(JSON.stringify(data2));
 			
-			location.reload();
+			location.reload(true);
 			
 		},
 		failure: function() {
@@ -469,7 +523,6 @@ $("#changePPButton").click(function(){
 	var data = new FormData(form);
 	
 	un = $.cookie('unBookreviewer');
-	console.log(un);
 	token = $.cookie('tokenBookreviewer');
 	$.ajax({
 		type: "post",
@@ -483,11 +536,13 @@ $("#changePPButton").click(function(){
 		contentType: false,
 		processData: false,
 		cache: false,
-		dataType: 'json',
+		dataType: 'text',
 		success: function(data2) {
 			alert(data2);
 			
 			$('#uploadpp').modal('hide');
+
+			location.reload(true);
 			
 		},
 		failure: function() {
@@ -499,3 +554,211 @@ $("#changePPButton").click(function(){
 
 
 
+function publicDetails() {
+
+	
+	$.getJSON("http://37.97.227.173:5000/users/username/"+publicProfile, function(data2){
+		$('#usernamepf').attr('value', data2.results[0].username);
+		$('#emailpf').attr('value', data2.results[0].email);
+		$('#fnamepf').attr('value', data2.results[0].fname);
+		$('#lnamepf').attr('value', data2.results[0].lname);
+		$('#agepf').attr('value', data2.results[0].age);
+		if (data2.results[0].gender == 'male') {
+			$("input[name='gender'][value='male']").prop('checked', true);
+		} else {
+			$("input[name='gender'][value='female']").prop('checked', true);
+		}
+		
+	});
+				
+	$.getJSON("http://37.97.227.173:5000/users/username/"+publicProfile, function(data3){
+		if ("profilePicture" in data3.results[0]) {
+			$('#profilePicture').attr('src', data3.results[0].profilePicture);
+		} else {
+			$('#profilePicture').attr('src', '/profile-pictures/empty-profile-picture.gif');
+		}
+	});
+		//alert(window.location.pathname);
+}
+
+function publicReviews() {
+	$.ajax({
+		type: "get",
+		url: "http://37.97.227.173:5000/review/by_user/" + publicProfile,
+		dataType: "json",
+		success: function(data) {
+			for (var x in data.results){
+				console.log(data.results[x].reviewTitle);
+				$( "#profileReviews" ).append("<tr onclick=\"window.location.href = 'review.php?reviewid="+data.results[x]._id+"&isbn="+ data.results[x].reviewOnBook +"';\"><td>"+data.results[x].reviewTitle+"</td><td>"+data.results[x].bookTitle+"</td><td>"+data.results[x].reviewOnBook+"</td></tr>");
+			}
+		}
+	});
+}
+
+
+function reviewPage() {
+	$.get( "http://37.97.227.173:5000/books/isbn/" + reviewISBN, function( data ) {
+		var book = data.results;
+		
+		$( ".book-column" ).append("<div class=\"book-image\" id =\"foto\"><img src=\""+book.photoPath+"\" class=\"book-image\"></div>")
+
+	});
+		
+		
+	$.get( "http://37.97.227.173:5000/review/by_id/" + reviewID, function( data ) {
+				
+		$( "#review_content #title" ).append(data.results[0].reviewTitle);
+		$( "#review_content #author" ).append(data.results[0].reviewBy);
+		$( "#review_content #reviewContent" ).append(data.results[0].content);
+		if (!!$.cookie('unBookreviewer') && !!$.cookie('tokenBookreviewer') && !!$.cookie('adminBookreviewer')) {
+			count = 0;
+			for(var x in data.results[0].comments){
+				if (data.results[0].comments[x].content ===  'Deleted comment') {
+					$( "#commentTable" ).append("<tr><td>"+data.results[0].comments[x].author+"</td><td>"+data.results[0].comments[x].content+"</td><td>"+data.results[0].comments[x].posted+"</td></tr>");
+				} else {
+					$( "#commentTable" ).append("<tr><td>"+data.results[0].comments[x].author+"    <button type=\"submit\" class=\"btn btn-primary btn-sm\" onclick=\"removeComment(\'"+reviewID+"\', \'"+String(count)+"\')\"><i class=\"glyphicon glyphicon-trash\"></i></button></td><td>"+data.results[0].comments[x].content+"</td><td>"+data.results[0].comments[x].posted+"</td></tr>");
+				}
+				count++;
+			}
+		} else {
+			for(var x in data.results[0].comments){
+				$( "#commentTable" ).append("<tr><td>"+data.results[0].comments[x].author+"</td><td>"+data.results[0].comments[x].content+"</td><td>"+data.results[0].comments[x].posted+"</td></tr>");
+			}
+		}
+					
+	});
+}
+
+
+function bookPage() {
+	$.get( "http://37.97.227.173:5000/books/isbn/" + bookISBN, function( data ) {
+		var book = data.results;
+		
+		$( ".book-column" ).append("<div class=\"book-image\" id =\"foto\"><img src=\""+book.photoPath+"\" class=\"book-image\"></div>")
+		$("#myTable #title").append(book.title);
+		$("#myTable #author").append(book.author);
+		$("#myTable #ISBN").append(book.isbn);
+		$("#myTable #language").append(book.language);
+		$("#myTable #pages").append(book.pages);
+		$("#myTable #pubDate").append(book.pubDate);
+		$("#myTable #publisher").append(book.publisher);
+		$("#myTable #rateCount").append(book.rateCount);
+		$("#myTable #rating").append(book.rating);
+		$("#myTable #description").append(book.description);
+
+		bookTitle = book.title;
+
+		$("#addRevISBN").attr("value", bookISBN)
+		$("#addRevBookTitle").attr("value", bookTitle)
+	});
+		
+		
+	$.get( "http://37.97.227.173:5000/review/by_isbn/" + bookISBN, function( data ) {	
+		if (!!$.cookie('unBookreviewer') && !!$.cookie('tokenBookreviewer') && !!$.cookie('adminBookreviewer')) {
+			$("#removeBookButton").append("<button type=\"submit\" class=\"btn btn-primary btn-sm\" onclick=\"removeBook(\'"+bookISBN+"\')\"><i class=\"glyphicon glyphicon-trash\"></i> remove book</button>");
+			for (var x in data.results) {
+				$( "#reviewTable #reviewTableBody" ).append("<tr><td><a href=\"review.php?reviewid="+data.results[x]._id+"&isbn="+bookISBN+"\">"+data.results[x].reviewTitle+"</a></td><td>written by: 		"+data.results[x].reviewBy+"</td><td><button type=\"submit\" class=\"btn btn-primary btn-sm\" onclick=\"removeReview(\'"+data.results[x]._id+"\')\"><i class=\"glyphicon glyphicon-trash\"></i></button></td></tr>");
+			}
+
+		} else {
+			for (var x in data.results) {
+				$( "#reviewTable #reviewTableBody" ).append("<tr><td><a href=\"review.php?reviewid="+data.results[x]._id+"&isbn="+bookISBN+"\">"+data.results[x].reviewTitle+"</a></td><td>written by: 		"+data.results[x].reviewBy+"</td></tr>");
+			}
+		}
+	});
+
+}
+
+
+function bookCollection() {
+	$.get( "http://37.97.227.173:5000/books", function( data ) {
+
+	for (var x in data.results){
+		console.log(data)
+		$( ".row" ).append("<div class=\"book-column col-md-2\" id =\"foto\"><a href=\"book.php?isbn="+data.results[x].isbn+"\"><img src=\""+data.results[x].photoPath+"\" class=\"book-image\"></div>")
+		
+		
+		
+		console.log(data.results[x]);
+	}
+
+	});
+	
+}
+
+function bookSearch() {
+	$(".bookSearchTitle").html("You searched for: " + searchQuery);
+	$.get( "http://37.97.227.173:5000/search/books/"+searchQuery, function( data ) {
+		for (var x in data.results){
+			console.log(data)
+			$( ".row" ).append("<div class=\"book-column col-md-2\" id =\"foto\"><a href=\"book.php?isbn="+data.results[x].isbn+"\"><img src=\""+data.results[x].photoPath+"\" class=\"book-image\"></div>")
+			
+			
+			
+			console.log(data.results[x]);
+		}
+
+	});
+}
+
+
+function removeComment(rid, nr) {
+	un = $.cookie('unBookreviewer');
+	token = $.cookie('tokenBookreviewer');
+	$.ajax({
+		type: "put",
+		url: "http://37.97.227.173:5000/comments/delete/"+rid+"/"+nr,
+		headers: {
+			'username' : un,
+			'token' : token
+		},
+		dataType: 'text',
+		success: function(data2) {
+			location.reload(true);	
+		},
+		failure: function() {
+			alert("Deleting comment failed.");
+		}
+	});
+}
+
+
+function removeReview(rid) {
+	un = $.cookie('unBookreviewer');
+	token = $.cookie('tokenBookreviewer');
+	$.ajax({
+		type: "delete",
+		url: "http://37.97.227.173:5000/reviews/delete/"+rid,
+		headers: {
+			'username' : un,
+			'token' : token
+		},
+		dataType: 'text',
+		success: function(data2) {
+			location.reload(true);	
+		},
+		failure: function() {
+			alert("Deleting review failed.");
+		}
+	});
+}
+
+function removeBook(isbn) {
+	un = $.cookie('unBookreviewer');
+	token = $.cookie('tokenBookreviewer');
+	$.ajax({
+		type: "delete",
+		url: "http://37.97.227.173:5000/books/delete/"+isbn,
+		headers: {
+			'username' : un,
+			'token' : token
+		},
+		dataType: 'text',
+		success: function(data2) {
+			window.location.href = "books.php";	
+		},
+		failure: function() {
+			alert("Deleting review failed.");
+		}
+	});
+}

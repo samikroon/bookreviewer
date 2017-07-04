@@ -3,27 +3,23 @@
 
 
 <div class="col-md-3">
-	<div class="well" style="height=100%">
-	
-	</div>
 
-	<div class="book-column well">
+
+	<div class="book-column well" style="margin-top: 50px;">
 		
 	</div>
 </div>
 
 <div class="col-md-9">
 
-	<div class="well">
-		 
-	</div>
 	
-	<div class="well">
+	<div class="well" style="margin-top: 50px;">
 			
 		<table id="myTable" class="table table-striped">
 			<thead>
 				<tr>
 					<th>Information</th>
+					<th id="removeBookButton"></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -65,7 +61,7 @@
 				</tr>
 				<tr>
 					<td>Description</td>
-					<td id="description"></td>
+					<td id="description" style="white-space: pre-wrap;"></td>
 				</tr>
 
 			</tbody>
@@ -118,31 +114,16 @@
 </div>
 
 <script>
-$.get( "http://37.97.227.173:5000/books/isbn/<?php print($_GET["isbn"]) ?>", function( data ) {
-			var book = data.results;
-			
-			$( ".book-column" ).append("<div class=\"book-image\" id =\"foto\"><img src=\""+book.photoPath+"\" class=\"book-image\"></div>")
-			$("#myTable #title").append(book.title);
-			$("#myTable #author").append(book.author);
-			$("#myTable #ISBN").append(book.isbn);
-			$("#myTable #language").append(book.language);
-			$("#myTable #pages").append(book.pages);
-			$("#myTable #pubDate").append(book.pubDate);
-			$("#myTable #publisher").append(book.publisher);
-			$("#myTable #rateCount").append(book.rateCount);
-			$("#myTable #rating").append(book.rating);
-			$("#myTable #description").append(book.description);
-		});
-		
-		
-$.get( "http://37.97.227.173:5000/review/by_isbn/<?php print($_GET["isbn"]) ?>", function( data ) {
-			
-			for (var x in data.results)
-				$( "#reviewTable #reviewTableBody" ).append("<tr><td><a href=\"review.php?reviewid="+data.results[x]._id+"&isbn="+<?php print($_GET["isbn"]) ?>+"\">"+data.results[x].reviewTitle+"</a></td><td>"+data.results[x].reviewBy+"</td></tr>")
-		});
+
+var bookISBN = "<?php print($_GET["isbn"]) ?>";
+
+
 </script>
 
+
+
 </body>
+
 </html>
 
 

@@ -27,6 +27,14 @@
 				<ul>
 					<li><a class="navA" href="index.php">Home</a></li>
 					<li><a class="navA" href="books.php">Books</a></li>
+					<li>
+						<div class="search">
+							<input type="text" placeholder="Search book" id="query">
+						<button class="btn btn-default" type="submit" id="searchButton"><i class="glyphicon glyphicon-search"></i></button>
+						</div>
+						
+						
+					</li>
 					
 					<li id="logoutListing" style="float:right">
 					<li id="adminListing" style="float:right">

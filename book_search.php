@@ -6,7 +6,7 @@ color:#00FF00;>
 </h1>
 <div class="container">
 	<div class="well well-sm">
-		<strong>All Books</strong>
+		<strong class="bookSearchTitle"></strong>
 		
 	</div>
 	<div class="row">
@@ -18,6 +18,8 @@ color:#00FF00;>
 </div>
 
 <script>
+
+var searchQuery = "<?php print($_GET["search"]) ?>";
 
 </script>
 

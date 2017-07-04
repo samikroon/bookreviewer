@@ -20,40 +20,32 @@ color:#00FF00;>
 			<div class="form-group">
 				<label class="control-label col-sm-2" for="emailpf">Email:</label>
 				<div class="col-sm-5">
-					<input type="text" class="form-control" id="emailpf" name="email">
+					<input type="text" class="form-control" id="emailpf" name="email" disabled>
 				</div>
 			</div>
 			<div class="form-group">
 				<label class="control-label col-sm-2" for="fnamepf">First name:</label>
 				<div class="col-sm-5">
-					<input type="text" class="form-control" id="fnamepf" name="fname">
+					<input type="text" class="form-control" id="fnamepf" name="fname" disabled>
 				</div>
 			</div>
 			<div class="form-group">
 				<label class="control-label col-sm-2" for="lnamepf">Last name:</label>
 				<div class="col-sm-5">
-					<input type="text" class="form-control" id="lnamepf" name="lname">
+					<input type="text" class="form-control" id="lnamepf" name="lname" disabled>
 				</div>
 			</div>
 			<div class="form-group">
 				<label class="control-label col-sm-2" for="agepf">Age::</label>
 				<div class="col-sm-5">
-					<input type="text" class="form-control" id="agepf" name="age">
+					<input type="text" class="form-control" id="agepf" name="age" disabled>
 				</div>
 			</div>
 			<div class="form-group">
 				<label class="control-label col-sm-2" for="genderpf">Gender:</label>
 				<div class="col-sm-5">
-					<input type="radio" id = "genderpf" value="male" name="gender"> Male
-	  				<input type="radio" id = "genderpf" value="female" name="gender"> Female
-				</div>
-			</div>
-			<div class="form-group">
-				<label class="control-label col-sm-2" for="submitChanges"></label>
-				<div class="col-sm-5">
-					<a href="#" class="btn btn-default" id="submitThings" onclick="submitChanges();" for="changePF"> Submit changes </a>
-					<a href="#" class="btn btn-default" id="changePF" data-toggle="modal" data-target="#uploadpp"> Change profile picture </a>
-					<a href="#" class="btn btn-default" id="changePswd" onclick="changePassword();"> Change password </a>
+					<input type="radio" id = "genderpf" value="male" name="gender" disabled> Male
+	  				<input type="radio" id = "genderpf" value="female" name="gender" disabled> Female
 				</div>
 			</div>
 		</form>
@@ -83,7 +75,7 @@ color:#00FF00;>
 
 
 <script>
-	
+	var publicProfile = <?php  print($_GET["un"]) ?>
 </script>
 
 

@@ -103,7 +103,7 @@
         <table>
           <tr>
             <td><p>isbn:</p></td>
-            <td><p><input type="text" id="isbn" name="isbn"></p></td>
+            <td><p><input type="text" id="isbn" name="isbn" class="addBookISBN"></p></td>
           </tr>
           <tr>
             <td><p>title:</p></td>
@@ -149,6 +149,8 @@
   </div>
 </div>
 
+
+
 <!-- addReviewModal MODAL -->
 <div id="addReviewModal" class="modal fade" role="dialog">
   <div class="modal-dialog">
@@ -163,17 +165,18 @@
       <form enctype="multipart/form-data", id="submitNewReview">
         <p>Please fill in the following fields</p>
         <table>
-			<tr>
-				<td><p>Title:</p></td>
-				<td><p><input type="text" id="reviewTitle" name="reviewTitle"></p></td>
-			</tr>
-			<tr>
-				<td><p>Review:</p></td>
-				<td><p><textarea id="reviewContent" name="reviewContent" rows="8" cols="50"></textarea></p></td>
-			</tr>
+      <tr>
+        <td><p>Title:</p></td>
+        <td><p><input type="text" id="reviewTitle" name="reviewTitle"></p></td>
+      </tr>
+      <tr>
+        <td><p>Review:</p></td>
+        <td><p><textarea id="reviewContent" name="reviewContent" rows="8" cols="50" style="white-space: pre-wrap;"></textarea></p></td>
+      </tr>
         </table>
-		
-	<input type='hidden' name='reviewOnBook' value=<?php print($_GET["isbn"]) ?>>
+    
+      <input type='hidden' name='reviewOnBook' id="addRevISBN">
+      <input type='hidden' name='bookTitle' id='addRevBookTitle'>
     </form>
     </div>
     <div class="modal-footer">
@@ -238,3 +241,5 @@
 
   </div>
 </div>
+
+
