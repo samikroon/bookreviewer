@@ -76,22 +76,21 @@
 </div>
 
 
+
+
+
 <div class="col-md-9">
 
-	<div class="form-group">
-	  <label for="sel1">Rate this book:</label>
-	  <select class="form-control" id="sel1">
-		<option>1</option>
-		<option>2</option>
-		<option>3</option>
-		<option>4</option>
-		<option>5</option>
-	  </select>
-	  
-		<input type="submit" id="sendRating" style="width:100%" class="btn btn-info" value="Send rating" onclick=sendRating()>
-		<input type="hidden" id="name1" name="isbn" value="<?php print($_GET["isbn"]) ?>">
-	
+	<div class="well">
+		<form>
+			<label for="ratingbook" class="control-label">Rate Book</label>
+			<input id="ratingbook" name="ratingbook" value="3" class="rating-loading">
+			
+		</form>
+		<button class="btn btn-primary" onclick="sendRating();">Submit</button>
 	</div>
+	
+
 
 	<div class="well">
 		<table id="reviewTable" class="table table-striped">

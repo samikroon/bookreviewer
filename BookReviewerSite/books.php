@@ -5,20 +5,13 @@
 color:#00FF00;>
 </h1>
 <div class="container">
-	<div class="well well-sm">
-		<strong>All Books</strong>
-		
-	</div>
-	<div class="row">
-
-
-	</div>
 
 	
 </div>
 
 <script>
-
+var pageCount = 0;
+var numberOfPages = 0;
 </script>
 
 

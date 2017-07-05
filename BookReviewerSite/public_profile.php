@@ -75,7 +75,7 @@ color:#00FF00;>
 
 
 <script>
-	var publicProfile = <?php  print($_GET["un"]) ?>
+	var publicProfile = "<?php  print($_GET["un"]) ?>"
 </script>
 
 

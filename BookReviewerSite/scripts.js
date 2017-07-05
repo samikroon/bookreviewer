@@ -7,6 +7,9 @@ cookieExpireDate.setTime(cookieExpireDate.getTime()+(minutes*60*1000));
 $(window).on('load', function(){
 	console.log("check login");
 	loggedIn();
+	if (window.location.pathname.indexOf('/index.php') !== -1) {
+		loadCarousel();
+	}
 	if (window.location.pathname=='/profile_page.php') {
 		profileDetails();
 		profileReviews();
@@ -22,6 +25,7 @@ $(window).on('load', function(){
 		bookPage();
 	}
 	if (window.location.pathname.indexOf('/books.php') !== -1) {
+		bookCount();
 		bookCollection();
 	}
 	if (window.location.pathname.indexOf('/book_search.php') !== -1) {
@@ -132,6 +136,9 @@ $("#register").click(function(){
 function logout(){
 	$.removeCookie('unBookreviewer', { path: '/' });
 	$.removeCookie('tokenBookreviewer', { path: '/' });
+	if (!!$.cookie('adminBookreviewer')) {
+		$.removeCookie('adminBookreviewer', { path: '/' });
+	}
 	location.reload();
 };
 
@@ -171,12 +178,14 @@ function loggedIn() {
 function navLoggedInRegular() {
 	$("#logoutListing").append("<a class=\"navA\" href=\"#\" onClick=\"logout();\">Logout</a>");
 	$("#profileListing").append("<a class=\"navA\" href=\"profile_page.php\">"+$.cookie('unBookreviewer')+"</a>");
+	$("#publicProfilesListing").append("<a class=\"navA\" href=\"#\" data-toggle=\"modal\" data-target=\"#searchUsersModal\">Profiles</a>");
 }
 
 function navLoggedInAdmin() {
 	$("#logoutListing").append("<a class=\"navA\" href=\"#\" onClick=\"logout();\">Logout</a>");
 	$("#adminListing").append("<a class=\"navA\" href=\"admin_panel.php\">Admin panel</a>");
 	$("#profileListing").append("<a class=\"navA\" href=\"profile_page.php\">"+$.cookie('unBookreviewer')+"</a>");
+	$("#publicProfilesListing").append("<a class=\"navA\" href=\"#\" data-toggle=\"modal\" data-target=\"#searchUsersModal\">Profiles</a>");
 }
 
 function navNotLoggedIn() {
@@ -330,24 +339,44 @@ $("#addReview").click(function(){
 });
 
 function sendRating(){
-	var rating = ($('#sel1').val());
-	var isbn = ($('#name1').attr("value"));
-	var url = "http://37.97.227.173:5000/books/update_rating_by_isbn/"+isbn+"/"+rating
-	
-	un = $.cookie('unBookreviewer');
-	token = $.cookie('tokenBookreviewer');
-	
-	$.ajax({
-		type: "PUT",
-		url: url,
-		dataType: 'text',
-		headers: {
-			'username' : un,
-			'token' : token
-		},
-		success: function(data){
-			location.reload(true)}
-});
+	var check = 0;
+	if (!!$.cookie('unBookreviewer') && !!$.cookie('tokenBookreviewer')) {
+		un = $.cookie('unBookreviewer');
+		token = $.cookie('tokenBookreviewer');
+		$.get("http://37.97.227.173:5000/users/username/"+un, function(data) {
+			booksRatedArray = String(data.results[0].booksRated);
+			booksRatedArray = booksRatedArray.split(',');
+			if (booksRatedArray) {
+				for (var x in booksRatedArray) {
+					if (booksRatedArray[x] === bookISBN) {
+						alert("you already rated this book");
+						check = 1;
+						break;
+					}
+				}
+				if (check == 0) {
+					var rating = ($('#ratingbook').val());
+					var url = "http://37.97.227.173:5000/books/update_rating_by_isbn/"+bookISBN+"/"+rating
+					$.ajax({
+						type: "PUT",
+						url: url,
+						dataType: 'text',
+						headers: {
+							'username' : un,
+							'token' : token
+						},
+						success: function(data){
+							alert(data);
+							window.location.href = "book.php?isbn="+bookISBN;
+						}
+					});
+				}
+			}
+			
+		});
+		
+		
+	}
 
 }
 
@@ -395,6 +424,7 @@ function fillUserModal(){
 				'token' : token
 			},
 			success: function(data) {
+			$('#userTable').empty();
 			$("#userTable").append("<tr><th>Username</th><th>User Type</th><th>Delete</th><th>Make Admin</th></tr>");
 				for (var x in data.results){
 					if (data.results[x].admin) {
@@ -413,28 +443,36 @@ function fillUserModal(){
 
 $("#searchUserButton").click(function() {
 	if (!!$.cookie('unBookreviewer') && !!$.cookie('tokenBookreviewer')) {
-		un = $.cookie('unBookreviewer');
-		token = $.cookie('tokenBookreviewer');
-		username = $("#searchUser").val();
-		$.ajax({
-			type: "get",
-			url: "http://37.97.227.173:5000/users/username/"+username,
-			headers: {
-				'username' : un,
-				'token' : token
-			},
-			success: function(data) {
-				$('#userTable').empty();
-				$("#userTable").append("<tr><th>Username</th><th>User Type</th><th>Delete</th><th>Make Admin</th></tr>");
+		query = $("#searchUser").val();
+		$.get("http://37.97.227.173:5000/search/users/"+query, function(data) {
+			$('#userTable').empty();
+			$("#userTable").append("<tr><th>Username</th><th>User Type</th><th>Delete</th><th>Make Admin</th></tr>");
+			for (var x in data.results) {
 				if (data.results[0].admin) {
-						admin = "Administrator";
-					} else {
-						admin = "Regular user";
-					}
-				$( "#userTable" ).append("<tr><td>"+data.results[0].username+"</td><td>"+admin+"</td><td><button type=\"submit\" class=\"btn btn-primary btn-sm\" onclick=\"removeUser(\'"+(data.results[0].username)+"\')\">delete user</button></td><td><button type=\"submit\" class=\"btn btn-primary btn-sm\" onclick=\"makeAdmin(\'"+(data.results[0].username)+"\')\">make admin</button></td></tr>");
-				
+					admin = "Administrator";
+				} else {
+					admin = "Regular user";
+				}
+				$( "#userTable" ).append("<tr><td>"+data.results[x].username+"</td><td>"+admin+"</td><td><button type=\"submit\" class=\"btn btn-primary btn-sm\" onclick=\"removeUser(\'"+(data.results[x].username)+"\')\">delete user</button></td><td><button type=\"submit\" class=\"btn btn-primary btn-sm\" onclick=\"makeAdmin(\'"+(data.results[x].username)+"\')\">make admin</button></td></tr>");
+			}
+		})
+	}
+})
+
+
+
+
+$("#searchPublicUserButton").click(function() {
+	if (!!$.cookie('unBookreviewer') && !!$.cookie('tokenBookreviewer')) {
+		query = $("#searchPublicUser").val();
+		$.get("http://37.97.227.173:5000/search/users/"+query, function(data) {
+			$('#searchUserTable').empty();
+			$("#searchUserTable").append("<tr><th>Username</th><th>First name</th><th>Last name</th></tr>");
+			for (var x in data.results) {
+				$( "#searchUserTable" ).append("<tr><td><a href=\"public_profile.php?un="+data.results[x].username+"\">"+data.results[x].username+"</a></td><td>"+data.results[x].fname+"</td><td>"+data.results[x].lname+"</td></tr>");
 			}
 		});
+
 	}
 })
 
@@ -608,21 +646,25 @@ function reviewPage() {
 	$.get( "http://37.97.227.173:5000/review/by_id/" + reviewID, function( data ) {
 				
 		$( "#review_content #title" ).append(data.results[0].reviewTitle);
-		$( "#review_content #author" ).append(data.results[0].reviewBy);
+		$( "#review_content #author" ).append("<a href=\"public_profile.php?un="+data.results[0].reviewBy+"\">"+data.results[0].reviewBy+"</a>");
 		$( "#review_content #reviewContent" ).append(data.results[0].content);
 		if (!!$.cookie('unBookreviewer') && !!$.cookie('tokenBookreviewer') && !!$.cookie('adminBookreviewer')) {
 			count = 0;
 			for(var x in data.results[0].comments){
 				if (data.results[0].comments[x].content ===  'Deleted comment') {
-					$( "#commentTable" ).append("<tr><td>"+data.results[0].comments[x].author+"</td><td>"+data.results[0].comments[x].content+"</td><td>"+data.results[0].comments[x].posted+"</td></tr>");
+					//$( "#commentTable" ).append("<tr><td><a href=\"public_profile.php?un="+data.results[0].comments[x].author+"\">"+data.results[0].comments[x].author+"</a></td><td>"+data.results[0].comments[x].content+"</td><td>"+data.results[0].comments[x].posted+"</td></tr>");
 				} else {
-					$( "#commentTable" ).append("<tr><td>"+data.results[0].comments[x].author+"    <button type=\"submit\" class=\"btn btn-primary btn-sm\" onclick=\"removeComment(\'"+reviewID+"\', \'"+String(count)+"\')\"><i class=\"glyphicon glyphicon-trash\"></i></button></td><td>"+data.results[0].comments[x].content+"</td><td>"+data.results[0].comments[x].posted+"</td></tr>");
+					$( "#commentTable" ).append("<tr><td><a href=\"public_profile.php?un="+data.results[0].comments[x].author+"\">"+data.results[0].comments[x].author+"</a>    <button type=\"submit\" class=\"btn btn-primary btn-sm\" onclick=\"removeComment(\'"+reviewID+"\', \'"+String(count)+"\')\"><i class=\"glyphicon glyphicon-trash\"></i></button></td><td>"+data.results[0].comments[x].content+"</td><td>"+data.results[0].comments[x].posted+"</td></tr>");
 				}
 				count++;
 			}
 		} else {
 			for(var x in data.results[0].comments){
-				$( "#commentTable" ).append("<tr><td>"+data.results[0].comments[x].author+"</td><td>"+data.results[0].comments[x].content+"</td><td>"+data.results[0].comments[x].posted+"</td></tr>");
+				if (data.results[0].comments[x].content === 'Deleted comment') {
+					continue;
+				} else {
+					$( "#commentTable" ).append("<tr><td><a href=\"public_profile.php?un="+data.results[0].comments[x].author+"\">"+data.results[0].comments[x].author+"</a></td><td>"+data.results[0].comments[x].content+"</td><td>"+data.results[0].comments[x].posted+"</td></tr>");
+				}
 			}
 		}
 					
@@ -631,6 +673,7 @@ function reviewPage() {
 
 
 function bookPage() {
+	$('#ratingbook').rating({});
 	$.get( "http://37.97.227.173:5000/books/isbn/" + bookISBN, function( data ) {
 		var book = data.results;
 		
@@ -657,12 +700,12 @@ function bookPage() {
 		if (!!$.cookie('unBookreviewer') && !!$.cookie('tokenBookreviewer') && !!$.cookie('adminBookreviewer')) {
 			$("#removeBookButton").append("<button type=\"submit\" class=\"btn btn-primary btn-sm\" onclick=\"removeBook(\'"+bookISBN+"\')\"><i class=\"glyphicon glyphicon-trash\"></i> remove book</button>");
 			for (var x in data.results) {
-				$( "#reviewTable #reviewTableBody" ).append("<tr><td><a href=\"review.php?reviewid="+data.results[x]._id+"&isbn="+bookISBN+"\">"+data.results[x].reviewTitle+"</a></td><td>written by: 		"+data.results[x].reviewBy+"</td><td><button type=\"submit\" class=\"btn btn-primary btn-sm\" onclick=\"removeReview(\'"+data.results[x]._id+"\')\"><i class=\"glyphicon glyphicon-trash\"></i></button></td></tr>");
+				$( "#reviewTable #reviewTableBody" ).append("<tr><td><a href=\"review.php?reviewid="+data.results[x]._id+"&isbn="+bookISBN+"\">"+data.results[x].reviewTitle+"</a></td><td>written by: 		<a href=\"public_profile.php?un="+data.results[x].reviewBy+"\">"+data.results[x].reviewBy+"</a></td><td><button type=\"submit\" class=\"btn btn-primary btn-sm\" onclick=\"removeReview(\'"+data.results[x]._id+"\')\"><i class=\"glyphicon glyphicon-trash\"></i></button></td></tr>");
 			}
 
 		} else {
 			for (var x in data.results) {
-				$( "#reviewTable #reviewTableBody" ).append("<tr><td><a href=\"review.php?reviewid="+data.results[x]._id+"&isbn="+bookISBN+"\">"+data.results[x].reviewTitle+"</a></td><td>written by: 		"+data.results[x].reviewBy+"</td></tr>");
+				$( "#reviewTable #reviewTableBody" ).append("<tr><td><a href=\"review.php?reviewid="+data.results[x]._id+"&isbn="+bookISBN+"\">"+data.results[x].reviewTitle+"</a></td><td>written by: 		<a href=\"public_profile.php?un="+data.results[x].reviewBy+"\">"+data.results[x].reviewBy+"</a></td></tr>");
 			}
 		}
 	});
@@ -670,20 +713,43 @@ function bookPage() {
 }
 
 
-function bookCollection() {
-	$.get( "http://37.97.227.173:5000/books", function( data ) {
+function bookCount() {
+	$.get( "http://37.97.227.173:5000/books/count", function( data ) {
+		numberOfPages = parseInt(parseInt(data)/24);
+	});
+}
 
-	for (var x in data.results){
-		console.log(data)
-		$( ".row" ).append("<div class=\"book-column col-md-2\" id =\"foto\"><a href=\"book.php?isbn="+data.results[x].isbn+"\"><img src=\""+data.results[x].photoPath+"\" class=\"book-image\"></div>")
+
+function bookCollection() {
+	$.get( "http://37.97.227.173:5000/books/page/"+pageCount, function( data ) {
+		$(".container").empty();
+		$(".container").append("<div class=\"well well-sm book-bar\"><strong>All Books</strong></div>");
+		$(".container").append("<div class=\"row\"></div>");
+		for (var x in data.results){
+			$( ".row").append("<div class=\"book-column col-md-2\" id =\"foto\"><a href=\"book.php?isbn="+data.results[x].isbn+"\"><img src=\""+data.results[x].photoPath+"\" class=\"book-image\"></div>");
+		}
+		if((pageCount < numberOfPages)) {
+			$(".book-bar").append("<button type=\"submit\" class=\"btn btn-primary btn-sm\" onclick=\"iteratePage(\'next\')\" style=\"float:right\">page forward<i class=\"glyphicon glyphicon-menu-right\"></i></button>");	
+		}
+		if(pageCount > 0) {
+			$(".book-bar").append("<button type=\"submit\" class=\"btn btn-primary btn-sm\" onclick=\"iteratePage(\'back\')\" style=\"float:right\">page backward<i class=\"glyphicon glyphicon-menu-left\"></i></button>");
+		}
 		
 		
-		
-		console.log(data.results[x]);
-	}
 
 	});
 	
+}
+
+function iteratePage(direction) {
+	if (direction === 'next') {
+		pageCount++;
+		bookCollection();
+	}
+	if (direction === 'back') {
+		pageCount--;
+		bookCollection();
+	}
 }
 
 function bookSearch() {
@@ -760,5 +826,19 @@ function removeBook(isbn) {
 		failure: function() {
 			alert("Deleting review failed.");
 		}
+	});
+}
+
+
+function loadCarousel() {
+	$.get( "http://37.97.227.173:5000/topbooks", function( data ) {
+		for (var x in data.results){
+			if (x == 0) {
+				$(".carousel-inner").append("<div class=\"item active\" style=\"height:450px; width:300px; margin-left:auto; margin-right:auto;\"><a href=\"book.php?isbn="+data.results[x].isbn+"\"><img src=\""+data.results[x].photoPath+"\" class=\"book-image\"></div>");
+			} else {
+				$(".carousel-inner").append("<div class=\"item\" style=\"height:450px; width:300px; margin-left:auto; margin-right:auto;\"><a href=\"book.php?isbn="+data.results[x].isbn+"\"><img src=\""+data.results[x].photoPath+"\" class=\"book-image\"></div>");
+			}
+		}
+
 	});
 }

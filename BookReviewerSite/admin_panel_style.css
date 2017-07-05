@@ -12,3 +12,7 @@ table.admin_panel{
 	height: 50%;
 	overflow-y: auto;
 }
+
+.search-user-body {
+	overflow-y: auto;
+}

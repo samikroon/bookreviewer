@@ -219,6 +219,36 @@
 
 
 
+<!-- admin view users MODAL -->
+<div id="searchUsersModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+  <!-- Modal content-->
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal">&times;</button>
+      <h4 class="modal-title">Search Users</h4>
+    </div>
+    <div class="well well-sm"> 
+      <input type="text" id="searchPublicUser" name="" placeholder="search on username">
+      <button type="submit" class="btn btn-default" id="searchPublicUserButton">SEARCH</button>
+    </div>
+    <div class="modal-body search-user-body">
+
+      <table id="searchUserTable" class="table table-striped">
+        
+      </table>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    </div>
+  </div>
+
+  </div>
+</div>
+
+
+
 <div id="uploadpp" class="modal fade" role="dialog">
   <div class="modal-dialog">
 
