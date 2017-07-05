@@ -8,7 +8,8 @@ $(window).on('load', function(){
 	console.log("check login");
 	loggedIn();
 	if (window.location.pathname.indexOf('/index.php') !== -1) {
-		loadCarousel();
+		loadCarouselOne();
+		loadCarouselTwo();
 	}
 	if (window.location.pathname=='/profile_page.php') {
 		profileDetails();
@@ -830,13 +831,27 @@ function removeBook(isbn) {
 }
 
 
-function loadCarousel() {
+function loadCarouselOne() {
 	$.get( "http://37.97.227.173:5000/topbooks", function( data ) {
 		for (var x in data.results){
 			if (x == 0) {
-				$(".carousel-inner").append("<div class=\"item active\" style=\"height:450px; width:300px; margin-left:auto; margin-right:auto;\"><a href=\"book.php?isbn="+data.results[x].isbn+"\"><img src=\""+data.results[x].photoPath+"\" class=\"book-image\"></div>");
+				$(".cone").append("<div class=\"item active\" style=\"height:450px; width:300px; margin-left:auto; margin-right:auto;\"><a href=\"book.php?isbn="+data.results[x].isbn+"\"><img src=\""+data.results[x].photoPath+"\" class=\"book-image\"></div>");
 			} else {
-				$(".carousel-inner").append("<div class=\"item\" style=\"height:450px; width:300px; margin-left:auto; margin-right:auto;\"><a href=\"book.php?isbn="+data.results[x].isbn+"\"><img src=\""+data.results[x].photoPath+"\" class=\"book-image\"></div>");
+				$(".cone").append("<div class=\"item\" style=\"height:450px; width:300px; margin-left:auto; margin-right:auto;\"><a href=\"book.php?isbn="+data.results[x].isbn+"\"><img src=\""+data.results[x].photoPath+"\" class=\"book-image\"></div>");
+			}
+		}
+
+	});
+
+}
+
+function loadCarouselTwo() {
+	$.get( "http://37.97.227.173:5000/lastAdded/books", function( data ) {
+		for (var x in data.results){
+			if (x == 0) {
+				$(".ctwo").append("<div class=\"item active\" style=\"height:450px; width:300px; margin-left:auto; margin-right:auto;\"><a href=\"book.php?isbn="+data.results[x].isbn+"\"><img src=\""+data.results[x].photoPath+"\" class=\"book-image\"></div>");
+			} else {
+				$(".ctwo").append("<div class=\"item\" style=\"height:450px; width:300px; margin-left:auto; margin-right:auto;\"><a href=\"book.php?isbn="+data.results[x].isbn+"\"><img src=\""+data.results[x].photoPath+"\" class=\"book-image\"></div>");
 			}
 		}
 

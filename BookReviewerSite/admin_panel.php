@@ -7,6 +7,14 @@
 color:#00FF00;>
 </h1>
 
+<script>
+	if (!!$.cookie('unBookreviewer') && !!$.cookie('tokenBookreviewer') && !!$.cookie('adminBookreviewer')) {
+	
+	} else{
+		window.location.href = "index.php";
+	}
+</script>
+
 <table class="admin_panel" cellpadding="20">
 	<tr>
 		<td class="admin_p_td">
