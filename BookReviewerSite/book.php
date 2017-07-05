@@ -57,7 +57,9 @@
 				</tr>
 				<tr>
 					<td>Rating</td>
-					<td id="rating"></td>
+					<td>
+						<input id="ratingBookScore" name="ratingBookScore" class="rating-loading">
+					</td>
 				</tr>
 				<tr>
 					<td>Description</td>
@@ -81,7 +83,8 @@
 
 <div class="col-md-9">
 
-	<div class="well">
+
+	<div class="well rating-well">
 		<form>
 			<label for="ratingbook" class="control-label">Rate Book</label>
 			<input id="ratingbook" name="ratingbook" value="3" class="rating-loading">
@@ -97,7 +100,7 @@
 			<thead>
 				<tr>
 					<th>Reviews</th>
-					<th><button type="button" class="btn btn-success btn-block" data-toggle="modal" data-target="#addReviewModal">Write review</button></th>
+					<th class="write-review-button"><button type="button" class="btn btn-success btn-block" data-toggle="modal" data-target="#addReviewModal">Write review</button></th>
 					
 					
 				</tr>

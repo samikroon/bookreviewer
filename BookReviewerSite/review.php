@@ -34,6 +34,12 @@
 						<td id="author"></td>
 					</tr>
 					<tr>
+						<td><i>Rating:</i></td>
+						<td>
+							<input id="ratingScore" name="ratingScore" class="rating-loading">
+						</td>
+					</tr>
+					<tr>
 						<td><i>Content:</i></td>
 						<td id="reviewContent" style="white-space: pre-wrap;"></td>
 					</tr>
@@ -44,8 +50,19 @@
 			</table>
 			
 		</div>
+
+
+
+		<div class="well rating-well">
+			<form>
+				<label for="ratingreview" class="control-label">Rate Review</label>
+				<input id="ratingreview" name="ratingbook" value="3" class="rating-loading">
+				
+			</form>
+			<button class="btn btn-primary" onclick="sendRatingReview();">Submit</button>
+		</div>
 		
-		<div class="well">
+		<div class="well comment-well">
 			<div class="modal-body">
 				<form enctype="multipart/form-data", id="submitNewComment">
 					<table>
